@@ -1,0 +1,11 @@
+### 3.6 Resumen de decisiones de limpieza
+
+| # | Problema | Evidencia | Decisión | Justificación |
+|---|---|---|---|---|
+| 1 | **Registros duplicados** | 556 pares idénticos en las 19 variables (excepto `CustomerID`); en 546 de ellos los IDs difieren exactamente en 1,470 | Eliminar las 556 copias y conservar la primera aparición (5,630 a 5,074 registros) | Evitar el sesgo en el entrenamiento y la fuga de información si una copia cae en entrenamiento y otra en prueba |
+| 2 | **Tipos de dato** | `CustomerID` es un identificador; `CityTier` es una categoría guardada como número; sin códigos fuera de rango | `CustomerID` pasa a índice; `CityTier` a tipo categórico; el resto se mantiene (las variables con decimales siguen como `float64`) | Conservar la trazabilidad sin que el ID entre al modelo; evitar que `CityTier` se interprete como magnitud; mantener compatibilidad con la imputación de scikit-learn |
+| 3 | **Categorías inconsistentes** | "Phone"/"Mobile Phone", "CC"/"Credit Card", "COD"/"Cash on Delivery", "Mobile"/"Mobile Phone" | Unificar cada par en la etiqueta más descriptiva | Equivalencia por significado y una sola convención de captura en producción.|
+| 4 | **Valores atípicos** | 10 variables con valores fuera del rango IQR; `WarehouseToHome` con 2 registros de ≈127 (límite 36.5) | `WarehouseToHome` > 36.5 pasa a faltante; el resto se conserva | El 127 es probablemente un error de captura; los demás podrán representar el comportamiento o forman la cola natural de variables de conteo, y eliminarlos descartaría más del 10% de los clientes |
+| 5 | **Valores faltantes** | 7 variables numéricas con 4.1% a 5.7% de nulos (1,677 filas, exactamente un nulo por fila); el churn cambia según falte o no el dato | No eliminar filas. Imputar con la mediana y agregar indicadores de faltante, en el `Pipeline` del Paso 4 ajustado solo con entrenamiento | Eliminar filas perdería el 33.1% de los datos, la mediana es robusta a asimetría y valores extremos.|
+
+**Dataset actual** 5,074 registros y 19 columnas (18 predictoras más `Churn`), con `CustomerID` como índice. El desbalance de la variable objetivo se mantiene prácticamente igual (83.4% / 16.6%). Los únicos valores faltantes son los 1,677 de las siete variables numéricas, que se tratan dentro del pipeline del Paso 4.
