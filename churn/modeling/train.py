@@ -68,7 +68,7 @@ def set_seed(seed:int)->None:
 
 def build_estimator(args):
     """Crea el modelo elegido con los hiperparámetros recibidos"""
-    class_weight = None if args.class_weight == "None" else args.class_weight
+    class_weight = None if args.class_weight == "none" else args.class_weight
     if args.model == "logreg":
         solver = "liblinear" if args.penalty == "l1" else "lbfgs"
         return LogisticRegression(C=args.C, penalty=args.penalty, solver=solver,

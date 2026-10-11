@@ -65,7 +65,7 @@ def log_run(args, model, params, metrics, figures, X_train, X_test, data_hash):
         mlflow.sklearn.log_model(
             sk_model = model, name= "modelo", signature=signature, 
             input_example=X_train.head(),
-            skops_trusted_types=["numpy.dtype", "sklearn.tree,_tree.Tree"]
+            skops_trusted_types=["numpy.dtype", "sklearn.tree._tree.Tree"]
         )
 
         return run.info.run_id, run.info.run_name
