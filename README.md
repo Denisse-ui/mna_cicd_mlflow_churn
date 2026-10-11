@@ -32,56 +32,68 @@ pip install -r requirements.txt
 
 Requiere Python 3.14 (probado con 3.14.6).
 
-## Project Organization
+## Ejecución
 
-```
-├── LICENSE            <- Open-source license if one is chosen
-├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
-├── README.md          <- The top-level README for developers using this project.
-├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling.
-│   └── raw            <- The original, immutable data dump.
-│
-├── docs               <- A default mkdocs project; see www.mkdocs.org for details
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
-│
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
-│
-├── pyproject.toml     <- Project configuration file with package metadata for 
-│                         churn and configuration for tools like black
-│
-├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-│
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
-│
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-├── setup.cfg          <- Configuration file for flake8
-│
-└── churn   <- Source code for use in this project.
-    │
-    ├── __init__.py             <- Makes churn a Python module
-    │
-    ├── config.py               <- Store useful variables and configuration
-    │
-    ├── dataset.py              <- Scripts to download or generate data
-    │
-    ├── features.py             <- Code to create features for modeling
-    │
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
-    │
-    └── plots.py                <- Code to create visualizations
+Desde la raíz del proyecto, con el entorno virtual activo:
+
+```bash
+python -m churn.modeling.train --model logreg --C 1.0 --penalty l2 --class-weight balanced --seed 42
 ```
 
---------
+Si no se indica `--data-path`, el script usa `data/raw/E Commerce Dataset.xlsx`; si no existe, lo descarga de Kaggle (versión 1) y deja ahí una copia local. Los datos no se versionan.
 
+Cada argumento tiene un valor por defecto. Para ver todos: `python -m churn.modeling.train --help`.
+
+Ejemplo con Random Forest:
+
+```bash
+python -m churn.modeling.train --model rf --n-estimators 200 --max-depth 10 --min-samples-leaf 5
+```
+
+## Resultados en MLflow
+
+Las corridas se guardan en el experimento `churn-ecommerce-experimentacion` (base SQLite `mlflow.db` y artefactos en `mlartifacts/`, ambos fuera del repositorio). Para verlas:
+
+```bash
+mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5001
+```
+
+Abrir http://127.0.0.1:5001. Cada corrida registra:
+
+- **Parámetros:** modelo, hiperparámetros, semilla, tamaño de prueba y manejo de desbalance.
+- **Métricas:** accuracy, precision, recall, f1, roc_auc, roc_auc_train y gap_roc_auc.
+- **Artefactos:** matriz de confusión y curva ROC.
+- **Modelo:** pipeline completo (preprocesamiento + clasificador) con firma y ejemplo de entrada.
+- **Etiquetas:** SHA256 del dataset y commit de git (lo registra MLflow).
+
+## Reproducibilidad
+
+- La semilla (`--seed`) se aplica a `random`, `numpy`, la división train/test y el modelo.
+- Las dependencias están fijadas en `requirements.txt`.
+- El hash SHA256 del dataset queda en cada corrida, para detectar si los datos cambiaron.
+- Ejecutar dos veces el mismo comando produce métricas idénticas.
+
+## Estructura del proyecto
+
+```
+├── Makefile                 Atajos de ejecución (corridas, UI, pruebas)
+├── README.md
+├── requirements.txt
+├── pyproject.toml
+├── churn/
+│   ├── config.py            Rutas, constantes y grupos de variables
+│   ├── features.py          Preprocesamiento (ColumnTransformer)
+│   ├── tracking.py          Registro en MLflow
+│   ├── data_prep/
+│   │   ├── loading.py       Localización y carga de datos, SHA256
+│   │   ├── cleaning.py      Limpieza (duplicados, tipos, categorías, outliers)
+│   │   └── splitting.py     División train/test estratificada
+│   └── modeling/
+│       ├── train.py         Script principal con argumentos de línea de comandos
+│       └── evaluate.py      Métricas y gráficas
+├── data/raw/                Dataset local (no versionado)
+├── docs/                    Documentación del proyecto (mkdocs)
+├── notebooks/               EDA y baseline de la semana pasada
+├── references/              Decisiones de limpieza
+└── tests/
+```
