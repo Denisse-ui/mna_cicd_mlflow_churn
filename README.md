@@ -6,6 +6,32 @@
 
 Experimentación con MLflow: churn en e-commerce
 
+## Datos
+
+- **Dataset:** *E-Commerce Customer Churn Analysis and Prediction* (Kaggle, `ankitverma2010`).
+- **Descarga:** el script lo obtiene con `kagglehub`, fijando la versión 1 del dataset para que
+  los resultados no cambien si se actualiza en Kaggle.
+- **Copia local:** la primera descarga se guarda en `data/raw/`; las siguientes ejecuciones usan
+  esa copia y no requieren conexión. Los datos no se incluyen en el repositorio.
+- **Trazabilidad:** cada corrida registra en MLflow la huella SHA-256 del archivo usado.
+
+## Modelos
+
+Se comparan dos modelos de clasificación binaria: 
+
+- Regresión logística (`logreg`), el modelo base (*baseline*) del notebook.
+- Random Forest (`rf`)
+
+## Instalación 
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Requiere Python 3.14 (probado con 3.14.6).
+
 ## Project Organization
 
 ```
