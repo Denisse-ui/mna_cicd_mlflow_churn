@@ -7,8 +7,8 @@ RAW_DATA_DIR = PROJ_ROOT / "data" / "raw"        # data/raw dentro del proyecto
 
 # Datos
 KAGGLE_DATASET = "ankitverma2010/ecommerce-customer-churn-analysis-and-prediction/versions/1"    # dueño/nombre/versions/1
-DATA_FILE = "E commerce Dataset.xlsx"         # nombre del archivo Excel
-DATA_SHEET = "E comm"        # nombre de la hoja con los datos
+DATA_FILE = "E Commerce Dataset.xlsx"         # nombre del archivo Excel
+DATA_SHEET = "E Comm"        # nombre de la hoja con los datos
 TARGET = "Churn"            # variable objetivo
 
 # MLflow
