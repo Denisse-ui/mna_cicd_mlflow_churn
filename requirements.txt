@@ -1,8 +1,19 @@
-black
-flake8
-isort
-mkdocs
-pip
-pytest
-python-dotenv
+# Dependencias del proyecto (versiones de venv con Python 3.14.6)
 -e .
+
+# Datos y modelado
+pandas==3.0.6
+numpy==2.5.4
+scikit-learn==1.9.1
+openpyxl==3.1.5
+kagglehub==1.0.2
+
+# Seguimiento de experimentos
+mlflow==3.17.0
+
+# Gráficas (matriz de confusión y EDA del notebook)
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# Pruebas
+pytest==9.1.1
