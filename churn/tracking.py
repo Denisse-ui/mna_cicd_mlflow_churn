@@ -57,7 +57,8 @@ def log_run(args, model, params, metrics, figures, X_train, X_test, data_hash):
             mlflow.log_metric(name, float(value))
 
         for filename, fig in figures.items():
-            mlflow.log_figure(fig, filename)
+            mlflow.log_figure(fig, filename,
+                              save_kwargs={"dpi": 150, "bbox_inches": "tight"})
 
             plt.close(fig)
 
