@@ -97,3 +97,20 @@ Abrir http://127.0.0.1:5001. Cada corrida registra:
 ├── references/              Decisiones de limpieza
 └── tests/
 ```
+
+### Experimento realizado
+
+Se ejecutaron 8 corridas (`make experiments`) con la semilla 42, cambiando un solo factor respecto a la configuración base de cada modelo. Métricas sobre el conjunto de prueba (n = 1015):
+
+| Corrida | accuracy | precision | recall | F1 | ROC-AUC | AUC train |
+|---|---|---|---|---|---|---|
+| rf-n200-dnone-leaf1-balanced-s42 | 0.9724 | 0.9070 | 0.9286 | 0.9176 | 0.9921 | 1.0000 |
+| rf-n200-d10-leaf1-balanced-s42 | 0.9429 | 0.7835 | 0.9048 | 0.8398 | 0.9796 | 0.9986 |
+| rf-n200-dnone-leaf5-balanced-s42 | 0.9133 | 0.6754 | 0.9167 | 0.7778 | 0.9723 | 0.9967 |
+| logreg-C1.0-l2-none-s42 | 0.8877 | 0.7368 | 0.5000 | 0.5957 | 0.8840 | 0.9034 |
+| logreg-C1.0-l2-balanced-s42 | 0.8049 | 0.4500 | 0.8036 | 0.5769 | 0.8837 | 0.9039 |
+| logreg-C1.0-l1-balanced-s42 | 0.8020 | 0.4455 | 0.8036 | 0.5732 | 0.8839 | 0.9040 |
+| logreg-C10.0-l2-balanced-s42 | 0.8020 | 0.4455 | 0.8036 | 0.5732 | 0.8838 | 0.9040 |
+| logreg-C0.01-l2-balanced-s42 | 0.7941 | 0.4361 | 0.8333 | 0.5726 | 0.8816 | 0.8975 |
+
+Para reproducir el experimento completo desde cero: `make clean-mlflow && make experiments`.
